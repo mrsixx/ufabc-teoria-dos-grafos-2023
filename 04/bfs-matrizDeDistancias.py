@@ -1,29 +1,23 @@
-# Descrição: Faça um programa que faz a leitura de um grafo e imprime os instantes de descoberta e de finialização para cada vértice do grafo, de acordo com uma visita DFS (ou busca em profundidade).
+# Descrição: Faça um programa que faz a leitura de um grafo e imprime a matriz de distâncias obtidas por buscas em largura (BFS).
 
-# Entrada: Recebe n, m: n é o total de vértices, m o total de arcos (o vértice inicial sempre será o vértice 0).
+# Entrada: Recebe n, m: n é o total de vértices, m o total de arcos.
 # A seguir, m linhas, cada linha com um par de inteiros, correspondentes ao início e fim do arco.
 # (Os vértices são identificados de 0 até n-1.)
 
-# Saída: Imprime os instantes (descoberta e finalização) obtidos pela busca DFS.
+# Saída: Imprime a matriz de distâncias obtidas por buscas BFS.
 
-class Stack: 
+class Queue: 
     def __init__(self):
         self.array = []
     
-    def push(self, obj):
+    def enqueue(self, obj):
         self.array.append(obj)
     
-    def pop(self):
+    def dequeue(self):
         if self.is_empty():
             return None
         
-        return self.array.pop()
-    
-    def peek(self):
-        if self.is_empty():
-            return None
-        
-        return self.array[-1]
+        return self.array.pop(0)
 
     def is_empty(self):
         return len(self.array) == 0
@@ -76,36 +70,29 @@ def le_grafo(n,m):
         g.add_edge(u,v)
     return g
 
+def bfs(g, s):
+    distancies = [-1] * g.get_v()
+    queue = Queue()
+    queue.enqueue(s)
+    distancies[s] = 0
+    while not queue.is_empty():
+        v = queue.dequeue()
+        for n in g.neighbours(v):
+            if distancies[n] != -1:
+                continue
+            distancies[n] = distancies[v] + 1
+            queue.enqueue(n)
+    return distancies
 
-def dfs(gt):
-    stacked = [-1] * g.get_v()
-    unstacked = [-1] * g.get_v()
-    t = 0
+def bfs_matrix(g):
+    matrix = []
     for v in range(g.get_v()):
-        if stacked[v] != -1:
-            continue
-        t = t+1
-        stack = Stack()
-        stack.push(v)
-        stacked[v] = t
-
-        while not stack.is_empty():
-            t = t+1
-            v = stack.peek()
-            unknown_neighbours = list(filter(lambda n: stacked[n] == -1, g.neighbours(v)))
-            if len(unknown_neighbours) > 0:
-                next = unknown_neighbours[0]
-                stacked[next] = t
-                stack.push(next)
-            else:
-                unstacked[v] = t
-                stack.pop()            
-
-    return stacked, unstacked
+        matrix.append(bfs(g,v))
+    return matrix
 
 if __name__ == "__main__":
-    n, m = (int(tmp) for tmp in input().split(" "))
+    n, m= (int(tmp) for tmp in input().split(" "))
     g = le_grafo(n, m)
-    stacked, unstacked = dfs(g)
-    print(stacked)
-    print(unstacked)
+    for v, vertex_distancies in enumerate(bfs_matrix(g)):
+        distancies = list(map(lambda d: str(d), vertex_distancies))
+        print('%(vertex)d: %(distancies)s' % {'vertex': v, "distancies": ' '.join(distancies).strip()})

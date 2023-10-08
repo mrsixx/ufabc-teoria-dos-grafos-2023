@@ -77,7 +77,7 @@ def le_grafo(n,m):
     return g
 
 
-def dfs(gt):
+def dfs(g):
     stacked = [-1] * g.get_v()
     unstacked = [-1] * g.get_v()
     t = 0
@@ -103,9 +103,28 @@ def dfs(gt):
 
     return stacked, unstacked
 
+def index_of(el, lst):
+    try:
+        return lst.index(el)
+    except:
+        return -1
+
+def calc_parentheses_expression(g):
+    instants = []
+    stacked, unstacked = dfs(g)
+    # todo vértice aparece 2x na expressão
+    for t in range(2 * g.get_v()):
+        tl = t+1
+        stacked_vertex = index_of(tl, stacked)
+        unstacked_vertex = index_of(tl, unstacked)
+
+        if stacked_vertex != -1:
+            instants.append('_(%d_' % stacked_vertex)
+        elif unstacked_vertex != -1:
+            instants.append('_%d)_' % unstacked_vertex)
+    return ''.join(instants).replace('__', '_').replace('_', ' ').strip()
+
 if __name__ == "__main__":
     n, m = (int(tmp) for tmp in input().split(" "))
     g = le_grafo(n, m)
-    stacked, unstacked = dfs(g)
-    print(stacked)
-    print(unstacked)
+    print(calc_parentheses_expression(g))

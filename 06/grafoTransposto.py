@@ -61,12 +61,27 @@ class Graph:
     def print_adj_list(self):
         for tail_vertex, adjacencies in enumerate(self.get_adj_list()):
             heads = list(map(lambda v: str(v), adjacencies))
-            print('%(vertex)distancies: %(incidencies)s' % {'vertex': tail_vertex, "incidencies": ' '.join(heads).strip()})
+            print('%(vertex)d: %(incidencies)s' % {'vertex': tail_vertex, "incidencies": ' '.join(heads).strip()})
 
     def neighbours(self, v):
         if v is not None and v < self.get_v():
             return self.get_adj_list()[v]
         return []
+    def has_edge(self, u,v):
+        if u is None or u >= self.get_v():
+            return False
+        if v is None or v >= self.get_v():
+            return False
+        return bool(self.get_adj_matrix()[u][v])
+
+    def transpose(self):
+        v, e = self.get_v(), self.get_e()
+        t = Graph(v,e)
+        for i in range(v):
+            for j in range(v):
+                if g.has_edge(i,j):
+                    t.add_edge(j,i)
+        return t
 
 def le_grafo(n,m): 
     g = Graph(n,m)
@@ -77,35 +92,7 @@ def le_grafo(n,m):
     return g
 
 
-def dfs(gt):
-    stacked = [-1] * g.get_v()
-    unstacked = [-1] * g.get_v()
-    t = 0
-    for v in range(g.get_v()):
-        if stacked[v] != -1:
-            continue
-        t = t+1
-        stack = Stack()
-        stack.push(v)
-        stacked[v] = t
-
-        while not stack.is_empty():
-            t = t+1
-            v = stack.peek()
-            unknown_neighbours = list(filter(lambda n: stacked[n] == -1, g.neighbours(v)))
-            if len(unknown_neighbours) > 0:
-                next = unknown_neighbours[0]
-                stacked[next] = t
-                stack.push(next)
-            else:
-                unstacked[v] = t
-                stack.pop()            
-
-    return stacked, unstacked
-
 if __name__ == "__main__":
     n, m = (int(tmp) for tmp in input().split(" "))
     g = le_grafo(n, m)
-    stacked, unstacked = dfs(g)
-    print(stacked)
-    print(unstacked)
+    g.transpose().print_adj_list()
