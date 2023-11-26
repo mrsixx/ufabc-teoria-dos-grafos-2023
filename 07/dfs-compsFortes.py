@@ -135,7 +135,7 @@ def calc_parentheses_expression(g):
     stacked, unstacked = dfs(g)
     dec_unstacked_vertex = [v[0] for v in sorted(enumerate(unstacked),key=by_unstack_time, reverse=True)]
     tstacked, tunstacked = dfs(g.transpose(), dec_unstacked_vertex)
-    print()
+    
     # todo vértice aparece 2x na expressão
     for t in range(2 * g.get_v()):
         tl = t+1
